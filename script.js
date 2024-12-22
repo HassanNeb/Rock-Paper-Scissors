@@ -1,5 +1,17 @@
 //Step 1: Write the logic to get the computer choice
 
+let humanScore = 0;
+let computerScore = 0;
+
+const displayResults = document.createElement("div");
+displayResults.className = "results";
+document.body.appendChild(displayResults);
+
+// Create a div to display the current score
+const scoreDisplay = document.createElement("div");
+scoreDisplay.className = "score-display";
+document.body.appendChild(scoreDisplay);
+
 function getComputerChoice() {
     let x = Math.floor(Math.random() * 3);
     let rock = "rock";
@@ -18,66 +30,47 @@ console.log(getComputerChoice());
 //Step 2: Write the logic to get the human choice
 
 function getHumanChoice() {
-    let choice = prompt(
-        "Hey! Are you ready to play? (Rock, Paper, or Scissors)"
-    )
-        .trim()
-        .toLowerCase();
+    const buttons = document.querySelectorAll(".choices");
 
-    while (choice !== "rock" && choice !== "paper" && choice !== "scissors") {
-        alert("Invalid choice. Please enter Rock, Paper, or Scissors.");
-        humanChoice = prompt(
-            "Hey! Are you ready to play? (Rock, Paper, or Scissors)"
-        )
-            .trim()
-            .toLowerCase();
-    }
+    // Add event listener to each button
 
-    return choice;
+    buttons.forEach((button) => {
+        button.addEventListener("click", function (event) {
+            const playerSelection = event.target.textContent;
+            console.log(`You selected: ${playerSelection}`);
+            playRound(playerSelection);
+        });
+    });
 }
 
-console.log(getHumanChoice());
+getHumanChoice();
 
-// Step 5: Write the logic to play the entire game 5 times
-
-function playGame() {
-    // Step 3: Declare the players score variables
-
-    let humanScore = 0;
-    let computerScore = 0;
-
-    // Step 4: Write the logic to play a single round
-
-    function playRound(humanChoice, computerChoice) {
-        // If both choices are the same, it's a tie
-        if (humanChoice === computerChoice) {
-            console.log("It's a tie!");
-            return;
-        }
-
-        // Win conditions for human player
-        if (
-            (humanChoice === "rock" && computerChoice === "scissors") ||
-            (humanChoice === "scissors" && computerChoice === "paper") ||
-            (humanChoice === "paper" && computerChoice === "rock")
-        ) {
-            console.log("Congratulations, You Won!");
-            humanScore++;
-        } else {
-            // If none of the win conditions are met, the computer wins
-            console.log("You Lost, Try Again.");
-            computerScore++;
-        }
+function playRound(playerSelection) {
+    let roundResult = "";
+    const computerChoice = getComputerChoice();
+    if (playerSelection === computerChoice) {
+        roundResult = "It's a tie!";
+    } else if (
+        (playerSelection === "rock" && computerChoice === "scissors") ||
+        (playerSelection === "scissors" && computerChoice === "paper") ||
+        (playerSelection === "paper" && computerChoice === "rock")
+    ) {
+        roundResult = "You win this round!";
+        humanScore++;
+    } else {
+        roundResult = "Computer wins this round.";
+        computerScore++;
     }
-    for (i = 1; i <= 5; i++) {
-        const humanChoice = getHumanChoice();
-        const computerChoice = getComputerChoice();
-        console.log(`Round ${i}:`);
-        playRound(humanChoice, computerChoice);
+
+    // Update the result display with the round result
+    displayResults.textContent = roundResult;
+
+    // Update the score display
+    if (humanScore === 5) {
+        scoreDisplay.textContent = `Current score: You ${humanScore} - ${computerScore} Computer. You won the Game!!!`;
+    } else if (computerScore === 5) {
+        scoreDisplay.textContent = `Current score: You ${humanScore} - ${computerScore} Computer. Computer won the Game.`;
+    } else {
+        scoreDisplay.textContent = `Current score: You ${humanScore} - ${computerScore} Computer`;
     }
-    console.log(
-        `Final Score - Human: ${humanScore}, Computer: ${computerScore}`
-    );
 }
-// start the game
-playGame();
